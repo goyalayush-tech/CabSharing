@@ -82,7 +82,8 @@
   - Write widget tests for search and filter components
   - _Requirements: 4.1, 4.2, 4.3, 4.4, 12.3_
 
-- [-] 7. Build ride joining and approval system
+- [ ] 7. Build ride joining and approval system
+
 
 
 
