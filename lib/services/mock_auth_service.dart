@@ -73,11 +73,7 @@ class MockUser implements User {
   @override
   bool get emailVerified => true;
 
-  @override
-  DateTime get createdTime => DateTime.now().subtract(const Duration(days: 30));
 
-  @override
-  DateTime get lastSignInTime => DateTime.now();
 
   // Implement other User interface methods with mock data
   @override
@@ -131,7 +127,6 @@ class MockUser implements User {
     throw UnimplementedError();
   }
 
-  @override
   Future<ConfirmationResult> reauthenticateWithPhoneNumber(String phoneNumber, [RecaptchaVerifier? verifier]) async {
     throw UnimplementedError();
   }
@@ -224,6 +219,5 @@ class MockIdTokenResult implements IdTokenResult {
   @override
   DateTime? get authTime => DateTime.now();
 
-  @override
   String? get signInSecondFactor => null;
 }

@@ -38,7 +38,7 @@ RideLink is a collaborative cab-sharing mobile application built with Flutter th
 2. WHEN a user creates a ride THEN the system SHALL require destination via Google Maps integration
 3. WHEN a user creates a ride THEN the system SHALL require date, time, available seats, and estimated total fare
 4. WHEN fare details are entered THEN the system SHALL automatically calculate price per person
-5. WHEN a user enables female-only option THEN the system SHALL restrict visibility to female users only
+5. [REMOVED] Female-only option requirement removed
 6. WHEN ride creation is complete THEN the system SHALL make the ride visible to other users
 
 ### Requirement 4
@@ -129,13 +129,6 @@ RideLink is a collaborative cab-sharing mobile application built with Flutter th
 3. WHEN viewing completed rides THEN the system SHALL display ride history with ratings received
 4. WHEN managing rides THEN the system SHALL allow cancellation of upcoming rides with appropriate notice
 
-### Requirement 12
+### Requirement 12 [REMOVED]
 
-**User Story:** As a user concerned about safety, I want female-only ride options, so that I can travel with enhanced security and comfort.
-
-#### Acceptance Criteria
-
-1. WHEN creating a ride THEN the system SHALL provide a female-only toggle option
-2. WHEN female-only is enabled THEN the system SHALL restrict ride visibility to verified female users
-3. WHEN a male user searches THEN the system SHALL exclude female-only rides from results
-4. WHEN joining female-only rides THEN the system SHALL verify user gender before allowing participation
+**Note:** Female-only ride option requirement has been removed from the system.

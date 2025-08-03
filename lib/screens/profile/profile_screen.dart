@@ -185,7 +185,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
+                const Icon(
                   Icons.star,
                   color: Colors.amber,
                   size: 20,
@@ -199,7 +199,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 const SizedBox(width: 8),
                 if (profile.isVerified)
-                  Icon(
+                  const Icon(
                     Icons.verified,
                     color: Colors.blue,
                     size: 20,

@@ -90,7 +90,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
           children: [
             const Text('Group Chat'),
             Text(
-              '${widget.ride.destination}',
+              widget.ride.destination,
               style: Theme.of(context).textTheme.bodySmall,
             ),
           ],

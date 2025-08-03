@@ -8,7 +8,7 @@ void main() {
 
     setUp(() {
       now = DateTime.now();
-      futureTime = now.add(Duration(hours: 2));
+      futureTime = now.add(const Duration(hours: 2));
     });
 
     RideGroup createValidRideGroup() {
@@ -91,7 +91,7 @@ void main() {
             pickupCoordinates: LatLng(40.7128, -74.0060),
             destination: 'Airport Terminal',
             destinationCoordinates: LatLng(40.6892, -74.1745),
-            scheduledTime: now.subtract(Duration(hours: 1)),
+            scheduledTime: now.subtract(const Duration(hours: 1)),
             totalSeats: 4,
             availableSeats: 3,
             totalFare: 100.0,

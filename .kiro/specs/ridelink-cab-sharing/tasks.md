@@ -89,6 +89,9 @@
 
 
 
+
+
+
   - Create ride details screen with comprehensive ride information display
   - Implement "Request to Join" functionality with Firestore transactions
   - Build join request management interface for group leaders

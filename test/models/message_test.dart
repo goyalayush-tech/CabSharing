@@ -113,7 +113,7 @@ void main() {
       });
 
       test('should throw error for future timestamp', () {
-        final futureTime = now.add(Duration(minutes: 2));
+        final futureTime = now.add(const Duration(minutes: 2));
         expect(
           () => Message(
             id: 'msg123',
@@ -127,7 +127,7 @@ void main() {
       });
 
       test('should accept timestamp within 1 minute of now', () {
-        final almostFutureTime = now.add(Duration(seconds: 30));
+        final almostFutureTime = now.add(const Duration(seconds: 30));
         expect(
           () => Message(
             id: 'msg123',

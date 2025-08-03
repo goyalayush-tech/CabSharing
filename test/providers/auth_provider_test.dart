@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ridelink/providers/auth_provider.dart';
 import 'package:ridelink/services/mock_auth_service.dart';

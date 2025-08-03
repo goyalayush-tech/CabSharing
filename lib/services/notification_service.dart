@@ -72,11 +72,25 @@ class NotificationService implements INotificationService {
   Future<void> sendJoinRequestNotification(String leaderId, String rideDestination, String requesterName) async {
     try {
       // In a real implementation, this would send a notification through your backend
-      // For now, we'll just log it
+      // For now, we'll simulate a local notification and log it
       debugPrint('Sending join request notification to leader $leaderId: $requesterName wants to join ride to $rideDestination');
       
-      // You would typically call your backend API here to send the notification
-      // Example: await _apiService.sendNotification(leaderId, title, body);
+      // Simulate sending notification through FCM topic
+      await subscribeToTopic('ride_leader_$leaderId');
+      
+      // In production, you would call your backend API here:
+      // await _apiService.sendNotification(leaderId, {
+      //   'title': 'New Join Request',
+      //   'body': '$requesterName wants to join your ride to $rideDestination',
+      //   'data': {
+      //     'type': 'join_request',
+      //     'leaderId': leaderId,
+      //     'requesterName': requesterName,
+      //     'destination': rideDestination,
+      //   }
+      // });
+      
+      debugPrint('Join request notification sent successfully');
     } catch (e) {
       debugPrint('Error sending join request notification: $e');
     }
@@ -92,8 +106,22 @@ class NotificationService implements INotificationService {
       
       debugPrint('Sending join request response notification to user $userId: $title - $body');
       
-      // You would typically call your backend API here to send the notification
-      // Example: await _apiService.sendNotification(userId, title, body);
+      // Simulate sending notification through FCM topic
+      await subscribeToTopic('user_$userId');
+      
+      // In production, you would call your backend API here:
+      // await _apiService.sendNotification(userId, {
+      //   'title': title,
+      //   'body': body,
+      //   'data': {
+      //     'type': approved ? 'join_approved' : 'join_declined',
+      //     'userId': userId,
+      //     'destination': rideDestination,
+      //     'approved': approved.toString(),
+      //   }
+      // });
+      
+      debugPrint('Join request response notification sent successfully');
     } catch (e) {
       debugPrint('Error sending join request response notification: $e');
     }

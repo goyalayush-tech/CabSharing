@@ -8,7 +8,6 @@ import 'package:ridelink/providers/user_provider.dart';
 import 'package:ridelink/services/mock_auth_service.dart';
 import 'package:ridelink/services/mock_ride_service.dart';
 import 'package:ridelink/services/mock_user_service.dart';
-import 'package:ridelink/models/ride_group.dart';
 
 void main() {
   group('HomeScreen', () {

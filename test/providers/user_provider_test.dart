@@ -1,10 +1,8 @@
-import 'dart:async';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ridelink/providers/user_provider.dart';
 import 'package:ridelink/services/mock_user_service.dart';
 import 'package:ridelink/models/user_profile.dart';
 import 'package:ridelink/models/rating.dart';
-import 'package:ridelink/core/errors/app_error.dart';
 
 void main() {
   group('UserProvider', () {

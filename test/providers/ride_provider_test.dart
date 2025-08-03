@@ -1,9 +1,7 @@
-import 'dart:async';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ridelink/providers/ride_provider.dart';
 import 'package:ridelink/services/mock_ride_service.dart';
 import 'package:ridelink/models/ride_group.dart';
-import 'package:ridelink/core/errors/app_error.dart';
 
 void main() {
   group('RideProvider', () {

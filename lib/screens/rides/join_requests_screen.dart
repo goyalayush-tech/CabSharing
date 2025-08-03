@@ -4,9 +4,7 @@ import '../../models/ride_group.dart';
 import '../../models/user_profile.dart';
 import '../../providers/ride_provider.dart';
 import '../../providers/user_provider.dart';
-import '../../providers/auth_provider.dart';
 import '../../widgets/user_avatar.dart';
-import '../../services/notification_service.dart';
 
 class JoinRequestsScreen extends StatefulWidget {
   final RideGroup ride;

@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/ride_provider.dart';
 import '../../providers/user_provider.dart';
 import '../../screens/rides/create_ride_screen.dart';
-import '../../screens/rides/ride_details_screen.dart';
+import '../rides/ride_details_screen_simple.dart';
 import '../../screens/profile/profile_screen.dart';
 import '../../widgets/ride_card.dart';
 
@@ -350,7 +349,7 @@ class _HomeTabState extends State<_HomeTab> {
                                 onTap: () {
                                   Navigator.of(context).push(
                                     MaterialPageRoute(
-                                      builder: (context) => RideDetailsScreen(ride: ride),
+                                      builder: (context) => RideDetailsScreen(rideId: ride.id),
                                     ),
                                   );
                                 },
@@ -520,7 +519,7 @@ class _MyRidesTabState extends State<_MyRidesTab> {
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (context) => RideDetailsScreen(ride: ride),
+                          builder: (context) => RideDetailsScreen(rideId: ride.id),
                         ),
                       );
                     },

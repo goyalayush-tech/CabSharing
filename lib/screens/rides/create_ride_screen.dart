@@ -25,7 +25,6 @@ class _CreateRideScreenState extends State<CreateRideScreen> {
   LatLng? _destinationCoordinates;
   DateTime? _scheduledTime;
   int _totalSeats = 4;
-  bool _femaleOnly = false;
   double? _estimatedDistance;
   double? _suggestedFare;
 
@@ -165,7 +164,7 @@ class _CreateRideScreenState extends State<CreateRideScreen> {
       totalFare: totalFare,
       pricePerPerson: totalFare / _totalSeats, // Price includes leader
       notes: _notesController.text.trim().isEmpty ? null : _notesController.text.trim(),
-      femaleOnly: _femaleOnly,
+
       createdAt: DateTime.now(),
     );
 
@@ -336,14 +335,7 @@ class _CreateRideScreenState extends State<CreateRideScreen> {
             ),
             const SizedBox(height: 16),
 
-            // Female Only Toggle
-            SwitchListTile(
-              title: const Text('Female Only'),
-              subtitle: const Text('Restrict this ride to female passengers only'),
-              value: _femaleOnly,
-              onChanged: (value) => setState(() => _femaleOnly = value),
-              secondary: const Icon(Icons.woman),
-            ),
+            // Female Only Toggle removed
             const SizedBox(height: 16),
 
             // Distance and Fare Info

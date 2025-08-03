@@ -1,9 +1,6 @@
-import 'dart:async';
-import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ridelink/services/auth_service.dart';
 import 'package:ridelink/services/mock_auth_service.dart';
-import 'package:ridelink/core/errors/app_error.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 void main() {
@@ -179,10 +176,10 @@ void main() {
     });
 
     test('should have valid timestamps', () {
-      expect(mockUser.createdTime, isA<DateTime>());
-      expect(mockUser.lastSignInTime, isA<DateTime>());
-      expect(mockUser.createdTime.isBefore(DateTime.now()), true);
-      expect(mockUser.lastSignInTime.isBefore(DateTime.now().add(const Duration(seconds: 1))), true);
+      expect(mockUser.metadata.creationTime, isA<DateTime>());
+      expect(mockUser.metadata.lastSignInTime, isA<DateTime>());
+      expect(mockUser.metadata.creationTime!.isBefore(DateTime.now()), true);
+      expect(mockUser.metadata.lastSignInTime!.isBefore(DateTime.now().add(const Duration(seconds: 1))), true);
     });
 
     test('should return mock token', () async {

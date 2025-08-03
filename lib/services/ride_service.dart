@@ -121,9 +121,6 @@ class RideService implements IRideService {
         query = query.where('destination', isEqualTo: criteria['destination']);
       }
 
-      if (criteria.containsKey('femaleOnly')) {
-        query = query.where('femaleOnly', isEqualTo: criteria['femaleOnly']);
-      }
 
       if (criteria.containsKey('date')) {
         final date = criteria['date'] as DateTime;
@@ -383,7 +380,6 @@ class RideService implements IRideService {
 
       final rideData = rideDoc.data()!;
       final leaderId = rideData['leaderId'] as String;
-      final destination = rideData['destination'] as String;
 
       await _firestore.collection(_joinRequestsCollection).add({
         'rideId': rideId,

@@ -63,7 +63,7 @@ class MockUserService implements IUserService {
     
     for (int i = 0; i < random.nextInt(10) + 5; i++) {
       ratings.add(Rating(
-        id: 'rating-${userId}-$i',
+        id: 'rating-$userId-$i',
         rideId: 'ride-$i',
         raterId: 'rater-$i',
         ratedUserId: userId,

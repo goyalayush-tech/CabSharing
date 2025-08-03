@@ -1,12 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
-import '../../lib/services/ride_service.dart';
-import '../../lib/services/notification_service.dart';
-import '../../lib/models/ride_group.dart';
-import '../../lib/models/user_profile.dart';
-import '../../lib/providers/ride_provider.dart';
-import '../../lib/core/errors/app_error.dart';
+import 'package:ridelink/services/ride_service.dart';
+import 'package:ridelink/services/notification_service.dart';
+import 'package:ridelink/models/ride_group.dart';
+import 'package:ridelink/providers/ride_provider.dart';
+import 'package:ridelink/core/errors/app_error.dart';
 
 import 'join_request_system_test.mocks.dart';
 
@@ -17,7 +16,6 @@ void main() {
     late MockINotificationService mockNotificationService;
     late RideProvider rideProvider;
     late RideGroup testRide;
-    late UserProfile testUser;
 
     setUp(() {
       mockRideService = MockIRideService();
@@ -43,19 +41,7 @@ void main() {
         createdAt: DateTime.now(),
       );
 
-      testUser = UserProfile(
-        id: 'test-user-id',
-        name: 'Test User',
-        email: 'test@example.com',
-        profileImageUrl: null,
-        bio: 'Test bio',
-        phoneNumber: '+1234567890',
-        averageRating: 4.5,
-        totalRides: 10,
-        isVerified: true,
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
-      );
+
     });
 
     group('Request to Join', () {

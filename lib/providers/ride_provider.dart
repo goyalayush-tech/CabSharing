@@ -147,132 +147,124 @@ class RideProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> cancelRide(String rideId, String reason) async {
-    _setLoading(true);
-    _clearError();
+  // Real-time ride stream
+  Stream<RideGroup?> getRideStream(String rideId) {
+    return _rideService.getRideStream(rideId);
+  }
 
+  // Get single ride
+  Future<RideGroup?> getRide(String rideId) async {
     try {
-      await _rideService.cancelRide(rideId, reason);
-      
-      // Update local data
-      final rideIndex = _userRides.indexWhere((ride) => ride.id == rideId);
-      if (rideIndex != -1) {
-        _userRides[rideIndex] = _userRides[rideIndex].copyWith(status: RideStatus.cancelled);
-        notifyListeners();
-      }
-      
+      return await _rideService.getRide(rideId);
     } catch (e) {
-      _setError(e is AppError ? e : AppError.unknown('Failed to cancel ride: $e'));
-    } finally {
-      _setLoading(false);
+      _setError(e is AppError ? e : AppError.unknown('Failed to get ride: $e'));
+      return null;
     }
   }
 
+  // Join request methods
   Future<void> requestToJoin(String rideId, String userId) async {
-    _setLoading(true);
     _clearError();
 
     try {
       await _rideService.requestToJoin(rideId, userId);
+      
+      // The real-time stream will automatically update the UI
+      // No need to manually update local state
+      
     } catch (e) {
       _setError(e is AppError ? e : AppError.unknown('Failed to request to join ride: $e'));
-    } finally {
-      _setLoading(false);
+      rethrow;
     }
   }
 
   Future<void> approveJoinRequest(String rideId, String requesterId) async {
-    _setLoading(true);
     _clearError();
 
     try {
       await _rideService.approveJoinRequest(rideId, requesterId);
       
-      // Refresh the ride data
-      final updatedRide = await _rideService.getRide(rideId);
-      if (updatedRide != null) {
-        _updateLocalRide(updatedRide);
-      }
+      // The real-time stream will automatically update the UI
+      // No need to manually update local state
       
     } catch (e) {
       _setError(e is AppError ? e : AppError.unknown('Failed to approve join request: $e'));
-    } finally {
-      _setLoading(false);
+      rethrow;
     }
   }
 
   Future<void> rejectJoinRequest(String rideId, String requesterId, String reason) async {
-    _setLoading(true);
     _clearError();
 
     try {
       await _rideService.rejectJoinRequest(rideId, requesterId, reason);
+      
+      // The real-time stream will automatically update the UI
+      // No need to manually update local state
+      
     } catch (e) {
       _setError(e is AppError ? e : AppError.unknown('Failed to reject join request: $e'));
-    } finally {
-      _setLoading(false);
+      rethrow;
     }
   }
 
   Future<void> removeMember(String rideId, String memberId) async {
-    _setLoading(true);
     _clearError();
 
     try {
       await _rideService.removeMember(rideId, memberId);
       
-      // Refresh the ride data
-      final updatedRide = await _rideService.getRide(rideId);
-      if (updatedRide != null) {
-        _updateLocalRide(updatedRide);
-      }
+      // The real-time stream will automatically update the UI
+      // No need to manually update local state
       
     } catch (e) {
       _setError(e is AppError ? e : AppError.unknown('Failed to remove member: $e'));
-    } finally {
-      _setLoading(false);
+      rethrow;
     }
   }
 
   Future<void> startRide(String rideId) async {
-    _setLoading(true);
     _clearError();
 
     try {
       await _rideService.startRide(rideId);
       
-      // Update local data
-      final rideIndex = _userRides.indexWhere((ride) => ride.id == rideId);
-      if (rideIndex != -1) {
-        _userRides[rideIndex] = _userRides[rideIndex].copyWith(status: RideStatus.active);
-        notifyListeners();
-      }
+      // Update local state
+      _updateRideStatus(rideId, RideStatus.active);
       
     } catch (e) {
       _setError(e is AppError ? e : AppError.unknown('Failed to start ride: $e'));
-    } finally {
-      _setLoading(false);
+      rethrow;
     }
   }
 
   Future<void> completeRide(String rideId) async {
-    _setLoading(true);
     _clearError();
 
     try {
       await _rideService.completeRide(rideId);
       
-      // Update local data
-      final rideIndex = _userRides.indexWhere((ride) => ride.id == rideId);
-      if (rideIndex != -1) {
-        _userRides[rideIndex] = _userRides[rideIndex].copyWith(status: RideStatus.completed);
-        notifyListeners();
-      }
+      // Update local state
+      _updateRideStatus(rideId, RideStatus.completed);
       
     } catch (e) {
       _setError(e is AppError ? e : AppError.unknown('Failed to complete ride: $e'));
-    } finally {
-      _setLoading(false);
+      rethrow;
+    }
+  }
+
+  Future<void> cancelRide(String rideId, String reason) async {
+    _clearError();
+
+    try {
+      await _rideService.cancelRide(rideId, reason);
+      
+      // Update local state
+      _updateRideStatus(rideId, RideStatus.cancelled);
+      
+    } catch (e) {
+      _setError(e is AppError ? e : AppError.unknown('Failed to cancel ride: $e'));
+      rethrow;
     }
   }
 
@@ -335,6 +327,33 @@ class RideProvider extends ChangeNotifier {
     // Update current ride
     if (_currentRide?.id == updatedRide.id) {
       _currentRide = updatedRide;
+    }
+    
+    notifyListeners();
+  }
+
+  void _updateRideStatus(String rideId, RideStatus status) {
+    // Update in user rides
+    final userRideIndex = _userRides.indexWhere((ride) => ride.id == rideId);
+    if (userRideIndex != -1) {
+      _userRides[userRideIndex] = _userRides[userRideIndex].copyWith(status: status);
+    }
+    
+    // Update in search results
+    final searchIndex = _searchResults.indexWhere((ride) => ride.id == rideId);
+    if (searchIndex != -1) {
+      _searchResults[searchIndex] = _searchResults[searchIndex].copyWith(status: status);
+    }
+    
+    // Update in nearby rides
+    final nearbyIndex = _nearbyRides.indexWhere((ride) => ride.id == rideId);
+    if (nearbyIndex != -1) {
+      _nearbyRides[nearbyIndex] = _nearbyRides[nearbyIndex].copyWith(status: status);
+    }
+    
+    // Update current ride
+    if (_currentRide?.id == rideId) {
+      _currentRide = _currentRide!.copyWith(status: status);
     }
     
     notifyListeners();

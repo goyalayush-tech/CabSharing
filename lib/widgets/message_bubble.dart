@@ -21,7 +21,7 @@ class MessageBubble extends StatelessWidget {
           if (!isMe) ...[
             CircleAvatar(
               radius: 16,
-              backgroundColor: Theme.of(context).primaryColor.withOpacity(0.1),
+              backgroundColor: Theme.of(context).primaryColor.withValues(alpha: 0.1),
               child: Text(
                 message.senderId[0].toUpperCase(),
                 style: TextStyle(
@@ -71,7 +71,7 @@ class MessageBubble extends StatelessWidget {
             const SizedBox(width: 8),
             CircleAvatar(
               radius: 16,
-              backgroundColor: Theme.of(context).primaryColor.withOpacity(0.1),
+              backgroundColor: Theme.of(context).primaryColor.withValues(alpha: 0.1),
               child: Text(
                 'Me',
                 style: TextStyle(

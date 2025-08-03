@@ -67,6 +67,7 @@ class RideGroup {
   final double pricePerPerson;
   final String? notes;
   final bool femaleOnly;
+
   final RideStatus status;
   final List<String> memberIds;
   final List<JoinRequest> joinRequests;
@@ -86,6 +87,7 @@ class RideGroup {
     required this.pricePerPerson,
     this.notes,
     this.femaleOnly = false,
+
     this.status = RideStatus.created,
     this.memberIds = const [],
     this.joinRequests = const [],
@@ -207,6 +209,7 @@ class RideGroup {
     double? pricePerPerson,
     String? notes,
     bool? femaleOnly,
+
     RideStatus? status,
     List<String>? memberIds,
     List<JoinRequest>? joinRequests,
@@ -226,6 +229,7 @@ class RideGroup {
       pricePerPerson: pricePerPerson ?? this.pricePerPerson,
       notes: notes ?? this.notes,
       femaleOnly: femaleOnly ?? this.femaleOnly,
+
       status: status ?? this.status,
       memberIds: memberIds ?? this.memberIds,
       joinRequests: joinRequests ?? this.joinRequests,
@@ -248,6 +252,7 @@ class RideGroup {
       pricePerPerson: (json['pricePerPerson'] as num).toDouble(),
       notes: json['notes'] as String?,
       femaleOnly: json['femaleOnly'] as bool? ?? false,
+
       status: RideStatus.values.firstWhere(
         (e) => e.toString().split('.').last == json['status'],
         orElse: () => RideStatus.created,
@@ -275,6 +280,7 @@ class RideGroup {
       'pricePerPerson': pricePerPerson,
       'notes': notes,
       'femaleOnly': femaleOnly,
+
       'status': status.toString().split('.').last,
       'memberIds': memberIds,
       'joinRequests': joinRequests.map((e) => e.toJson()).toList(),

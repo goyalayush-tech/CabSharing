@@ -160,7 +160,7 @@ void main() {
       });
 
       test('should throw error for future creation date', () {
-        final futureTime = now.add(Duration(hours: 1));
+        final futureTime = now.add(const Duration(hours: 1));
         expect(
           () => Rating(
             id: 'rating123',
