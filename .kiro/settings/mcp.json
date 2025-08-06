@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "figma": {
+      "command": "uvx",
+      "args": [
+        "mcp-server-figma"
+      ],
+      "env": {
+        "FIGMA_ACCESS_TOKEN": "figd_HyN7Nv20yXn7unJ-QHJi6VD3FtcbO1RGzs7QhD5A"
+      },
+      "disabled": false,
+      "autoApprove": []
+    }
+  }
+}

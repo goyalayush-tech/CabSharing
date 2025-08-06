@@ -1,28 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/ride_group.dart';
+import '../models/place_models.dart';
 import '../services/location_service.dart';
+import 'dynamic_map_widget.dart';
 
-class LocationPickerScreen extends StatefulWidget {
+class EnhancedLocationPicker extends StatefulWidget {
   final String title;
   final LatLng? initialLocation;
+  final bool showMap;
 
-  const LocationPickerScreen({
+  const EnhancedLocationPicker({
     super.key,
     required this.title,
     this.initialLocation,
+    this.showMap = true,
   });
 
   @override
-  State<LocationPickerScreen> createState() => _LocationPickerScreenState();
+  State<EnhancedLocationPicker> createState() => _EnhancedLocationPickerState();
 }
 
-class _LocationPickerScreenState extends State<LocationPickerScreen> {
+class _EnhancedLocationPickerState extends State<EnhancedLocationPicker> {
   final _searchController = TextEditingController();
-  final List<LocationSearchResult> _searchResults = [];
+  final List<PlaceSearchResult> _searchResults = [];
   bool _isLoading = false;
   LatLng? _selectedLocation;
   String? _selectedAddress;
+  String? _selectedPlaceId;
 
   @override
   void initState() {
@@ -41,7 +46,7 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
 
   Future<void> _loadAddressFromCoordinates(LatLng coordinates) async {
     try {
-      final locationService = context.read<LocationService>();
+      final locationService = context.read<ILocationService>();
       final placemarks = await locationService.getAddressFromCoordinates(
         coordinates.latitude,
         coordinates.longitude,
@@ -71,32 +76,28 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
     });
 
     try {
-      // In a real implementation, you would use Google Places API or similar
-      // For now, we'll simulate search results
-      await Future.delayed(const Duration(milliseconds: 500));
+      final locationService = context.read<ILocationService>();
+      LatLng? currentLocation;
       
-      final mockResults = [
-        LocationSearchResult(
-          name: '$query - Location 1',
-          address: '$query Street, City, Country',
-          coordinates: LatLng(37.7749 + (query.length * 0.001), -122.4194),
-        ),
-        LocationSearchResult(
-          name: '$query - Location 2',
-          address: '$query Avenue, City, Country',
-          coordinates: LatLng(37.7749 - (query.length * 0.001), -122.4194),
-        ),
-        LocationSearchResult(
-          name: '$query - Location 3',
-          address: '$query Road, City, Country',
-          coordinates: LatLng(37.7749, -122.4194 + (query.length * 0.001)),
-        ),
-      ];
+      // Try to get current location for better search results
+      try {
+        final position = await locationService.getCurrentLocation();
+        currentLocation = LatLng(position.latitude, position.longitude);
+      } catch (e) {
+        // Use default or selected location if current location fails
+        currentLocation = _selectedLocation;
+      }
+      
+      final results = await locationService.searchPlaces(
+        query,
+        location: currentLocation,
+        radius: 50000, // 50km radius
+      );
 
       if (mounted) {
         setState(() {
           _searchResults.clear();
-          _searchResults.addAll(mockResults);
+          _searchResults.addAll(results);
         });
       }
     } catch (e) {
@@ -120,12 +121,13 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
     });
 
     try {
-      final locationService = context.read<LocationService>();
+      final locationService = context.read<ILocationService>();
       final position = await locationService.getCurrentLocation();
       final coordinates = LatLng(position.latitude, position.longitude);
       
       setState(() {
         _selectedLocation = coordinates;
+        _selectedPlaceId = null; // Clear place ID for GPS location
       });
       
       await _loadAddressFromCoordinates(coordinates);
@@ -144,13 +146,22 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
     }
   }
 
-  void _selectLocation(LocationSearchResult result) {
+  void _selectLocation(PlaceSearchResult result) {
     setState(() {
       _selectedLocation = result.coordinates;
       _selectedAddress = result.address;
+      _selectedPlaceId = result.placeId;
       _searchController.text = result.name;
       _searchResults.clear();
     });
+  }
+
+  void _onMapLocationSelected(LatLng location) {
+    setState(() {
+      _selectedLocation = location;
+      _selectedPlaceId = null; // Clear place ID for map selection
+    });
+    _loadAddressFromCoordinates(location);
   }
 
   void _confirmSelection() {
@@ -158,8 +169,22 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
       Navigator.of(context).pop({
         'coordinates': _selectedLocation,
         'address': _selectedAddress,
+        'placeId': _selectedPlaceId,
       });
     }
+  }
+
+  List<MapMarkerData> _getMapMarkers() {
+    if (_selectedLocation == null) return [];
+    
+    return [
+      MapMarkerData(
+        coordinates: _selectedLocation!,
+        title: 'Selected Location',
+        description: _selectedAddress,
+        type: MapMarkerType.destination,
+      ),
+    ];
   }
 
   @override
@@ -237,18 +262,39 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
             ),
           ),
 
+          // Map (if enabled)
+          if (widget.showMap)
+            Container(
+              height: 200,
+              margin: const EdgeInsets.symmetric(horizontal: 16),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: DynamicMapWidget(
+                  initialLocation: _selectedLocation ?? widget.initialLocation,
+                  markers: _getMapMarkers(),
+                  onLocationSelected: _onMapLocationSelected,
+                  allowLocationSelection: true,
+                  showCurrentLocation: true,
+                ),
+              ),
+            ),
+
+          if (widget.showMap) const SizedBox(height: 16),
+
           // Search Results
           Expanded(
             child: _searchResults.isEmpty
-                ? const Center(
+                ? Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.search, size: 64, color: Colors.grey),
-                        SizedBox(height: 16),
+                        Icon(Icons.search, size: 64, color: Colors.grey[400]),
+                        const SizedBox(height: 16),
                         Text(
-                          'Search for a location above',
-                          style: TextStyle(color: Colors.grey),
+                          widget.showMap 
+                              ? 'Search above or tap on the map'
+                              : 'Search for a location above',
+                          style: TextStyle(color: Colors.grey[600]),
                         ),
                       ],
                     ),
@@ -261,6 +307,15 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
                         leading: const Icon(Icons.location_on),
                         title: Text(result.name),
                         subtitle: Text(result.address),
+                        trailing: result.types.isNotEmpty
+                            ? Chip(
+                                label: Text(
+                                  result.types.first.replaceAll('_', ' '),
+                                  style: const TextStyle(fontSize: 10),
+                                ),
+                                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              )
+                            : null,
                         onTap: () => _selectLocation(result),
                       );
                     },
@@ -272,14 +327,23 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
   }
 }
 
-class LocationSearchResult {
-  final String name;
-  final String address;
-  final LatLng coordinates;
+// Keep the old LocationPickerScreen for backward compatibility
+class LocationPickerScreen extends StatelessWidget {
+  final String title;
+  final LatLng? initialLocation;
 
-  LocationSearchResult({
-    required this.name,
-    required this.address,
-    required this.coordinates,
+  const LocationPickerScreen({
+    super.key,
+    required this.title,
+    this.initialLocation,
   });
+
+  @override
+  Widget build(BuildContext context) {
+    return EnhancedLocationPicker(
+      title: title,
+      initialLocation: initialLocation,
+      showMap: false, // Keep old behavior
+    );
+  }
 }

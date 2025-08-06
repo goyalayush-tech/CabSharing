@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import '../../models/ride_group.dart';
 import '../../providers/ride_provider.dart';
 import '../../providers/auth_provider.dart';
-import '../../widgets/location_picker.dart';
+import '../../widgets/free_location_picker.dart';
 import '../../core/errors/app_error.dart';
 import '../../core/utils/validators.dart';
 
@@ -223,20 +223,21 @@ class _CreateRideScreenState extends State<CreateRideScreen> {
               decoration: const InputDecoration(
                 labelText: 'Pickup Location',
                 prefixIcon: Icon(Icons.my_location),
+                suffixIcon: Icon(Icons.map),
               ),
               validator: (value) => Validators.validateLocation(value),
               onTap: () async {
-                final result = await Navigator.of(context).push<Map<String, dynamic>>(
-                  MaterialPageRoute(
-                    builder: (context) => const LocationPickerScreen(
-                      title: 'Select Pickup Location',
-                    ),
-                  ),
+                final result = await showFreeLocationPicker(
+                  context: context,
+                  title: 'Select Pickup Location',
+                  allowCurrentLocation: true,
+                  allowSearch: true,
+                  hintText: 'Search for pickup location...',
                 );
                 if (result != null) {
                   setState(() {
-                    _pickupController.text = result['address'];
-                    _pickupCoordinates = result['coordinates'];
+                    _pickupController.text = result['address'] ?? 'Selected location';
+                    _pickupCoordinates = result['location'];
                   });
                   _calculateDistanceAndFare();
                 }
@@ -251,20 +252,21 @@ class _CreateRideScreenState extends State<CreateRideScreen> {
               decoration: const InputDecoration(
                 labelText: 'Destination',
                 prefixIcon: Icon(Icons.location_on),
+                suffixIcon: Icon(Icons.map),
               ),
               validator: (value) => Validators.validateLocation(value),
               onTap: () async {
-                final result = await Navigator.of(context).push<Map<String, dynamic>>(
-                  MaterialPageRoute(
-                    builder: (context) => const LocationPickerScreen(
-                      title: 'Select Destination',
-                    ),
-                  ),
+                final result = await showFreeLocationPicker(
+                  context: context,
+                  title: 'Select Destination',
+                  allowCurrentLocation: true,
+                  allowSearch: true,
+                  hintText: 'Search for destination...',
                 );
                 if (result != null) {
                   setState(() {
-                    _destinationController.text = result['address'];
-                    _destinationCoordinates = result['coordinates'];
+                    _destinationController.text = result['address'] ?? 'Selected location';
+                    _destinationCoordinates = result['location'];
                   });
                   _calculateDistanceAndFare();
                 }

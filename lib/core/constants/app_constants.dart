@@ -73,9 +73,23 @@ class AppConstants {
   static const String paymentsEndpoint = '/payments';
 
   // Google Maps
+  static const String googleMapsApiKey = 'YOUR_GOOGLE_MAPS_API_KEY'; // Replace with your actual API key
   static const double defaultZoom = 15.0;
   static const double defaultLatitude = 37.7749;
   static const double defaultLongitude = -122.4194;
+  
+  // Free Map Services
+  static const String openRouteServiceApiKey = 'YOUR_OPENROUTE_API_KEY'; // Get free key from openrouteservice.org
+  static const String nominatimBaseUrl = 'https://nominatim.openstreetmap.org';
+  static const String openRouteServiceBaseUrl = 'https://api.openrouteservice.org/v2';
+  static const String osmTileServerUrl = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+  
+  // Free Map Configuration
+  static const Duration mapRequestTimeout = Duration(seconds: 10);
+  static const int maxMapRetries = 3;
+  static const Duration mapCacheDuration = Duration(hours: 24);
+  static const double nominatimRateLimit = 1.0; // requests per second
+  static const int openRouteServiceDailyLimit = 2000;
 
   // Payment
   static const String currency = 'USD';

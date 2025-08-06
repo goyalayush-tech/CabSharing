@@ -6,7 +6,9 @@ import '../../providers/ride_provider.dart';
 import '../../providers/user_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../widgets/user_avatar.dart';
+import '../../widgets/free_map_widget.dart';
 import '../../services/notification_service.dart';
+import '../../services/free_routing_service.dart';
 import 'join_requests_screen.dart';
 
 class RideDetailsScreen extends StatefulWidget {
@@ -26,6 +28,7 @@ class _RideDetailsScreenState extends State<RideDetailsScreen> {
   List<UserProfile> _memberProfiles = [];
   bool _isLoading = false;
   bool _hasRequested = false;
+  List<LatLng>? _routePolyline;
 
   @override
   void initState() {
@@ -46,6 +49,7 @@ class _RideDetailsScreenState extends State<RideDetailsScreen> {
       
       if (ride != null && mounted) {
         await _loadUserProfiles(ride);
+        await _loadRoute(ride);
       }
     } catch (e) {
       if (mounted) {
@@ -106,6 +110,28 @@ class _RideDetailsScreenState extends State<RideDetailsScreen> {
           SnackBar(content: Text('Failed to load user profiles: $e')),
         );
       }
+    }
+  }
+
+  Future<void> _loadRoute(RideGroup ride) async {
+    if (!mounted) return;
+    
+    try {
+      // Try to get the routing service from context
+      final routingService = context.read<IFreeRoutingService>();
+      final routeInfo = await routingService.calculateRoute(
+        ride.pickupCoordinates,
+        ride.destinationCoordinates,
+      );
+      
+      if (mounted) {
+        setState(() {
+          _routePolyline = routeInfo.polylinePoints;
+        });
+      }
+    } catch (e) {
+      // Route loading failed, continue without route visualization
+      debugPrint('Failed to load route: $e');
     }
   }
 
@@ -335,6 +361,39 @@ class _RideDetailsScreenState extends State<RideDetailsScreen> {
                                 ],
                               ),
                             ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+
+                      // Route Map
+                      Card(
+                        child: Container(
+                          height: 200,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: FreeMapWidget(
+                              initialLocation: ride.pickupCoordinates,
+                              markers: [
+                                MapMarkerData(
+                                  coordinates: ride.pickupCoordinates,
+                                  type: MapMarkerType.pickup,
+                                  title: 'Pickup',
+                                  subtitle: ride.pickupLocation,
+                                ),
+                                MapMarkerData(
+                                  coordinates: ride.destinationCoordinates,
+                                  type: MapMarkerType.destination,
+                                  title: 'Destination',
+                                  subtitle: ride.destination,
+                                ),
+                              ],
+                              polylinePoints: _routePolyline,
+                              allowLocationSelection: false,
+                              showCurrentLocation: false,
+                              showZoomControls: true,
+                              initialZoom: 12.0,
+                            ),
                           ),
                         ),
                       ),

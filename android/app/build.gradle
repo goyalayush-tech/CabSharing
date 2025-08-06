@@ -53,9 +53,18 @@ android {
         multiDexEnabled true
     }
 
+    signingConfigs {
+        release {
+            keyAlias 'upload'
+            keyPassword System.getenv("KEY_PASSWORD")
+            storeFile file('upload-keystore.jks')
+            storePassword System.getenv("STORE_PASSWORD")
+        }
+    }
+
     buildTypes {
         release {
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
         }
     }
 }
